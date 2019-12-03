@@ -21,7 +21,11 @@ public class SimpleTextStatisticsAnalyzer implements TextStatisticsAnalyzer {
      */
     @Override
     public int countSumLengthOfWords(String text) {
-        return 0;
+        int lettersCount = 0;
+        for (String word: getWords(text)) {
+            lettersCount += word.length();
+        }
+        return lettersCount;
     }
 
     /**
@@ -32,7 +36,7 @@ public class SimpleTextStatisticsAnalyzer implements TextStatisticsAnalyzer {
      */
     @Override
     public int countNumberOfWords(String text) {
-        return 0;
+        return getWords(text).size();
     }
 
     /**
@@ -42,7 +46,7 @@ public class SimpleTextStatisticsAnalyzer implements TextStatisticsAnalyzer {
      */
     @Override
     public int countNumberOfUniqueWords(String text) {
-        return 0;
+        return getUniqueWords(text).size();
     }
 
     /**
@@ -55,7 +59,7 @@ public class SimpleTextStatisticsAnalyzer implements TextStatisticsAnalyzer {
      */
     @Override
     public List<String> getWords(String text) {
-        return new ArrayList<>();
+        return new ArrayList<>(Arrays.asList(text.split("\\W+")));
     }
 
     /**
@@ -68,7 +72,7 @@ public class SimpleTextStatisticsAnalyzer implements TextStatisticsAnalyzer {
      */
     @Override
     public Set<String> getUniqueWords(String text) {
-        return new HashSet<>();
+        return new LinkedHashSet<>(getWords(text));
     }
 
     /**
@@ -80,7 +84,11 @@ public class SimpleTextStatisticsAnalyzer implements TextStatisticsAnalyzer {
      */
     @Override
     public Map<String, Integer> countNumberOfWordsRepetitions(String text) {
-        return Collections.emptyMap();
+        Map<String, Integer> wordsAndRepetitions = new LinkedHashMap<>();
+        for (String uniqueWord: getUniqueWords(text)) {
+            wordsAndRepetitions.put(uniqueWord,getRepetitionsCount(text, uniqueWord));
+        }
+        return wordsAndRepetitions;
     }
 
     /**
@@ -93,6 +101,27 @@ public class SimpleTextStatisticsAnalyzer implements TextStatisticsAnalyzer {
      */
     @Override
     public List<String> sortWordsByLength(String text, Direction direction) {
-        return new ArrayList<>();
+        List<String> words = getWords(text);
+        Collections.sort(words, new Comparator<String>() {
+            @Override
+            public int compare(String left, String right) {
+                return left.length() == right.length() ? left.compareTo(right) : left.length() - right.length();
+            }
+        });
+        if (direction.equals(Direction.DESC)) {
+            Collections.reverse(words);
+        }
+        return words;
+    }
+
+    private Integer getRepetitionsCount(String text, String word) {
+        List<String> allWords = getWords(text);
+        int repetitionsCount = 0;
+        for (String wordFromAllWords: allWords) {
+            if (wordFromAllWords.equals(word)) {
+                repetitionsCount += 1;
+            }
+        }
+        return repetitionsCount;
     }
 }
