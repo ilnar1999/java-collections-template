@@ -1,6 +1,7 @@
 package com.epam.izh.rd.online.service;
 
 import com.epam.izh.rd.online.helper.Direction;
+import com.epam.izh.rd.online.helper.SortByLength;
 
 import java.util.*;
 
@@ -102,12 +103,7 @@ public class SimpleTextStatisticsAnalyzer implements TextStatisticsAnalyzer {
     @Override
     public List<String> sortWordsByLength(String text, Direction direction) {
         List<String> words = getWords(text);
-        Collections.sort(words, new Comparator<String>() {
-            @Override
-            public int compare(String left, String right) {
-                return left.length() == right.length() ? left.compareTo(right) : left.length() - right.length();
-            }
-        });
+        words.sort(new SortByLength());
         if (direction.equals(Direction.DESC)) {
             Collections.reverse(words);
         }
